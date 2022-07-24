@@ -14,31 +14,27 @@ import java.util.List;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl {
     @Autowired
     private final UserStorage storage;
 
     //Получение всех пользователей
-    @Override
     public List<User> getAllUsers() {
         log.info(storage.getAllUsers().toString());
         return storage.getAllUsers();
     }
 
     //Добавление пользователя в базу
-    @Override
     public User addUser(User user) {
         return storage.addUser(user);
     }
 
     //Обновление полей пользователя
-    @Override
     public User patchUser(Long id, UserDto userDto) {
         return storage.patchUser(id, userDto);
     }
 
     //Получение пользователя по id
-    @Override
     public User getUserById(Long id) {
         if (storage.getUserById(id) != null) {
             return storage.getUserById(id);
@@ -48,7 +44,6 @@ public class UserServiceImpl implements UserService {
     }
 
     //Удаление пользователя по id
-    @Override
     public void deleteUserById(Long id) {
         if (storage.getUserById(id) != null) {
             storage.delereUserById(id);

@@ -32,7 +32,7 @@ public class InMemoryUserStorage implements UserStorage {
             return user;
         } else {
 
-            throw new DublEmail("email не ществует в базе");
+            throw new DublEmail("email существует в базе");
         }
     }
 
@@ -48,7 +48,7 @@ public class InMemoryUserStorage implements UserStorage {
                 }
             }
         } else {
-            throw new DublEmail("email не ществует в базе");
+            throw new DublEmail("email существует в базе");
         }
         return users.get(id);
     }

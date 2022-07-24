@@ -7,18 +7,18 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ItemService {
-    //Запрос всех вещей пользователя
+    //Запрос всех вещей пользователя.
     List<Item> getAllItems(Long userId);
 
-    //Запрос вещи
+    //Запрос вещи.
     Item getItem(Long userId, Long id);
 
-    //Добавление вещи
+    //Добавление вещи.
     Item addItem(Long userId, Item item);
 
-    //Изменение вещи
+    //Изменение вещи.
     Item patchUser(Long userId, Long id, ItemDto itemDto);
 
-    //Поиск вещи
+    //Поиск вещи.
     List<Item> searchItems(Optional<String> text);
 }
