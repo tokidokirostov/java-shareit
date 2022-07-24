@@ -1,6 +1,5 @@
 package ru.practicum.shareit;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
@@ -10,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.controller.UserController;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
@@ -36,7 +34,7 @@ public class ShareItTests {
     }
 
     @Test
-    public void User() throws Exception {
+    public void user() throws Exception {
         User user = new User(null, "mmm@mail.ru", "mmm");
         User user1 = new User(null, "mmm@mail.ru", "nnn");
         User user2 = new User(null, "mmmmail.ru", "mmm");
@@ -46,8 +44,8 @@ public class ShareItTests {
         String jacksonUser3 = mapper.writeValueAsString(updateUser);
 
         String jacksonUser = mapper.writeValueAsString(user);
-        mockMvc.perform(post("/users").content(jacksonUser).
-                        contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/users").content(jacksonUser)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("1"))
                 .andExpect(jsonPath("$.name").value("mmm"));
@@ -55,34 +53,26 @@ public class ShareItTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("1"))
                 .andExpect(jsonPath("$.name").value("mmm"));
-        mockMvc.perform(post("/users").content(jacksonUser1).
-                        contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/users").content(jacksonUser1)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());
-        mockMvc.perform(post("/users").content(jacksonUser2).
-                        contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/users").content(jacksonUser2)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());
 
         mockMvc.perform(patch("/users/1")
                         .content(jacksonUser3)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        //.andExpect(jsonPath("$.id").value("1"))
-        //.andExpect(jsonPath("$.email").value("rrr@mail.ru"));
         mockMvc.perform(get("/users/1", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("1"))
                 .andExpect(jsonPath("$.email").value("rrr@mail.ru"));
 
-        /*mockMvc.perform(delete("/users/1"))
-                .andExpect(status().is2xxSuccessful());
-
-        mockMvc.perform(get("/users"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isEmpty());*/
     }
 
     @Test
-    public void Items() throws Exception {
+    public void items() throws Exception {
         User user = new User(null, "mmm@mail.ru", "mmm");
         String jacksonUser1 = mapper.writeValueAsString(user);
         ItemDto itemDto = new ItemDto(null, "name", "descr", true, null, null);
@@ -93,10 +83,9 @@ public class ShareItTests {
         String jacksonItem1 = mapper.writeValueAsString(itemDto1);
         String jacksonItem2 = mapper.writeValueAsString(itemDto2);
         String jacksonItem3 = mapper.writeValueAsString(itemDto3);
-        mockMvc.perform(post("/users").content(jacksonUser1).
-                        contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/users").content(jacksonUser1)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                //.andExpect(jsonPath("$.id").value("1"))
                 .andExpect(jsonPath("$.name").value("mmm"));
         mockMvc.perform(post("/items").header("X-Sharer-User-Id", "1")
                         .content(jacksonItem)

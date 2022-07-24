@@ -9,7 +9,7 @@ import java.util.List;
 public interface ItemStorage {
     Item addItem(Long userId, Item item);
 
-    Item patchUser(Long UserId, Long id, ItemDto itemDto);
+    Item patchUser(Long userId, Long id, ItemDto itemDto);
 
     List<Item> getAllItems(Long userId);
 

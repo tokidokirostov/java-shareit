@@ -10,11 +10,11 @@ import java.util.*;
 @Component
 public class InMemoryItemStorage implements ItemStorage {
     private final Map<Long, List<Item>> items = new HashMap<>();
-    private Long IdItem = 0L;
+    private Long idItem = 0L;
 
     //Добавление вещи
     public Item addItem(Long userId, Item item) {
-        item.setId(++IdItem);
+        item.setId(++idItem);
         if (items.containsKey(userId)) {
             items.get(userId).add(item);
         } else {
