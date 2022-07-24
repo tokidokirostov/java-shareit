@@ -56,7 +56,7 @@
 		</dependency>
 	</dependencies>
 
-	<!--<build>
+	<build>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -200,8 +200,8 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-	</build>-->
-	<!--<profiles>
+	</build>
+	<profiles>
 		<profile>
 			<id>check</id>
 			<build>
@@ -236,6 +236,6 @@
 				</plugins>
 			</build>
 		</profile>
-	</profiles>-->
+	</profiles>
 
 </project>
