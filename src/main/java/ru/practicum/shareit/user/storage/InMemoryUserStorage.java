@@ -2,7 +2,7 @@ package ru.practicum.shareit.user.storage;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.DublEmail;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
@@ -26,30 +26,29 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User addUser(User user) {
         if (!checkEmailInBase(user.getEmail())) {
-            id = id + 1;
-            user.setId(id);
+            user.setId(++id);
             users.put(user.getId(), user);
             return user;
         } else {
-
             throw new DublEmail("email существует в базе");
         }
     }
 
     //Обновление полей пользователя
-    public User patchUser(Long id, UserDto userDto) {
-        if (!checkEmailInBase(userDto.getEmail())) {
+    public User patchUser(Long id, User user) {
+        if (!checkEmailInBase(user.getEmail())) {
             if (users.containsKey(id)) {
-                if (userDto.getName() != null) {
-                    users.get(id).setName(userDto.getName());
+                if (user.getName() != null) {
+                    users.get(id).setName(user.getName());
                 }
-                if (userDto.getEmail() != null) {
-                    users.get(id).setEmail(userDto.getEmail());
+                if (user.getEmail() != null) {
+                    users.get(id).setEmail(user.getEmail());
                 }
             }
         } else {
             throw new DublEmail("email существует в базе");
         }
+        System.out.println(UserMapper.toUserDto(users.get(id)));
         return users.get(id);
     }
 
@@ -60,7 +59,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     //Удаление пользователя по id
     public void delereUserById(Long id) {
-            users.remove(id);
+        users.remove(id);
     }
 
     private boolean checkEmailInBase(String email) {

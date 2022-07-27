@@ -1,24 +1,23 @@
 package ru.practicum.shareit.item.service;
 
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface ItemService {
     //Запрос всех вещей пользователя.
-    List<Item> getAllItems(Long userId);
+    List<ItemDto> getAllItems(Long userId);
 
     //Запрос вещи.
-    Item getItem(Long userId, Long id);
+    ItemDto getItem(Long userId, Long id);
 
     //Добавление вещи.
-    Item addItem(Long userId, Item item);
+    ItemDto addItem(Long userId, ItemDto itemDto);
 
     //Изменение вещи.
-    Item patchUser(Long userId, Long id, ItemDto itemDto);
+    ItemDto patchUser(Long userId, Long id, ItemDto itemDto);
 
     //Поиск вещи.
-    List<Item> searchItems(Optional<String> text);
+    List<ItemDto> searchItems(Optional<String> text);
 }

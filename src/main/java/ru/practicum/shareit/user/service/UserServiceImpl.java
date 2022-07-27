@@ -6,44 +6,52 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.storage.UserStorage;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @AllArgsConstructor
-public class UserServiceImpl {
+public class UserServiceImpl implements UserService {
     @Autowired
     private final UserStorage storage;
 
     //Получение всех пользователей
-    public List<User> getAllUsers() {
+    @Override
+    public List<UserDto> getAllUsers() {
         log.info(storage.getAllUsers().toString());
-        return storage.getAllUsers();
+        return storage.getAllUsers().stream()
+                .map(user -> UserMapper.toUserDto(user))
+                .collect(Collectors.toList());
     }
 
     //Добавление пользователя в базу
-    public User addUser(User user) {
-        return storage.addUser(user);
+    @Override
+    public UserDto addUser(UserDto userDto) {
+        return UserMapper.toUserDto(storage.addUser(UserMapper.toUser(userDto)));
     }
 
     //Обновление полей пользователя
-    public User patchUser(Long id, UserDto userDto) {
-        return storage.patchUser(id, userDto);
+    @Override
+    public UserDto patchUser(Long id, UserDto userDto) {
+        return UserMapper.toUserDto(storage.patchUser(id, UserMapper.toUser(userDto)));
     }
 
     //Получение пользователя по id
-    public User getUserById(Long id) {
+    @Override
+    public UserDto getUserById(Long id) {
         if (storage.getUserById(id) != null) {
-            return storage.getUserById(id);
+            return UserMapper.toUserDto(storage.getUserById(id));
         } else {
             throw new ValidationException("Пользователь не найден");
         }
     }
 
     //Удаление пользователя по id
+    @Override
     public void deleteUserById(Long id) {
         if (storage.getUserById(id) != null) {
             storage.delereUserById(id);

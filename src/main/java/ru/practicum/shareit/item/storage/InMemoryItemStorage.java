@@ -1,73 +1,41 @@
 package ru.practicum.shareit.item.storage;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class InMemoryItemStorage implements ItemStorage {
-    private final Map<Long, List<Item>> items = new HashMap<>();
+    private final Map<Long, Item> items = new HashMap<>();
     private Long idItem = 0L;
 
     //Добавление вещи
-    public Item addItem(Long userId, Item item) {
+    public Item addItem(Item item) {
         item.setId(++idItem);
-        if (items.containsKey(userId)) {
-            items.get(userId).add(item);
-        } else {
-            List<Item> itemList = new ArrayList<>();
-            itemList.add(item);
-            items.put(userId, itemList);
-        }
+        items.put(item.getId(), item);
         return item;
     }
 
     //Изменение вещи
     @Override
-    public Item patchUser(Long userId, Long id, ItemDto itemDto) {
-        List<Item> itemList = items.get(userId);
-        Item returnItem = new Item();
-        if (itemList == null) {
-            throw new NotFoundException("Item не найден!");
-        } else {
-            for (Item item1 : itemList) {
-                if (item1.getId().equals(id)) {
-                    if (itemDto.getName() != null) {
-                        item1.setName(itemDto.getName());
-                    }
-                    if (itemDto.getDescription() != null) {
-                        item1.setDescription(itemDto.getDescription());
-                    }
-                    if (itemDto.getAvailable() != null) {
-                        item1.setAvailable(itemDto.getAvailable());
-                    }
-                    returnItem = item1;
-                }
-            }
-            return returnItem;
-        }
+    public Item patchUser(Item item) {
+        items.remove(item.getId());
+        items.put(item.getId(), item);
+        return item;
     }
 
     //Запрос всех вещей пользователя
     @Override
     public List<Item> getAllItems(Long userId) {
-        return items.get(userId);
+        return items.values().stream().filter(item -> item.getOwner().getId().equals(userId)).collect(Collectors.toList());
     }
 
     //Запрос вещи
     @Override
-    public Item getItem(Long userId, Long id) {
-        Item item = new Item();
-        for (List<Item> itemList1 : items.values())
-            for (Item item1 : itemList1) {
-                if (item1.getId().equals(id)) {
-                    item = item1;
-                }
-            }
-        return item;
+    public Item getItem(Long id) {
+        return items.get(id);
     }
 
     //Поиск вещи
@@ -77,18 +45,15 @@ public class InMemoryItemStorage implements ItemStorage {
             List<Item> itemList = new ArrayList<>(findItems);
             return itemList;
         } else {
-
-            for (List<Item> listItems : items.values()) {
-                for (Item item : listItems) {
-                    if ((item.getName().toLowerCase().contains(text.toLowerCase())
-                            || item.getDescription().toLowerCase().contains(text.toLowerCase()))
-                            && item.getAvailable() == true) {
-                        findItems.add(item);
-                    }
+            for (Item item : items.values()) {
+                if ((item.getName().toLowerCase().contains(text.toLowerCase())
+                        || item.getDescription().toLowerCase().contains(text.toLowerCase()))
+                        && item.getAvailable() == true) {
+                    findItems.add(item);
                 }
             }
             List<Item> itemList = new ArrayList<>(findItems);
-            return itemList;
+            return itemList.stream().sorted((i1, i2) -> i1.getId().compareTo(i2.getId())).collect(Collectors.toList());
         }
     }
 }
