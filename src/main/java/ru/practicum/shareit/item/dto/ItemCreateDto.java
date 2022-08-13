@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
-public class ItemDtoController {
+public class ItemCreateDto {
     Long id;
     @NotNull
     @NotBlank

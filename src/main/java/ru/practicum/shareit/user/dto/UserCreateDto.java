@@ -8,7 +8,7 @@ import javax.validation.constraints.Email;
 
 @Data
 @AllArgsConstructor
-public class UserDtoController {
+public class UserCreateDto {
     Long id;
     @NonNull
     @Email

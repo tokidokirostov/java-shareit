@@ -4,12 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.exception.DublEmail;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
-import ru.practicum.shareit.user.storage.UserStorage;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -17,13 +20,13 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
     @Autowired
-    private final UserStorage storage;
+    private final UserRepository storage;
 
     //Получение всех пользователей
     @Override
     public List<UserDto> getAllUsers() {
-        log.info(storage.getAllUsers().toString());
-        return storage.getAllUsers().stream()
+        log.info(storage.findAll().toString());
+        return storage.findAll().stream()
                 .map(user -> UserMapper.toUserDto(user))
                 .collect(Collectors.toList());
     }
@@ -31,33 +34,47 @@ public class UserServiceImpl implements UserService {
     //Добавление пользователя в базу
     @Override
     public UserDto addUser(UserDto userDto) {
-        return UserMapper.toUserDto(storage.addUser(UserMapper.toUser(userDto)));
+        return UserMapper.toUserDto(storage.save(UserMapper.toUser(userDto)));
     }
 
     //Обновление полей пользователя
     @Override
     public UserDto patchUser(Long id, UserDto userDto) {
-        return UserMapper.toUserDto(storage.patchUser(id, UserMapper.toUser(userDto)));
+        Optional<User> user = storage.findById(id);
+        if (user.isPresent()) {
+            if (userDto.getName() != null) {
+                user.get().setName(userDto.getName());
+            }
+            if (userDto.getEmail() != null) {
+                if (storage.findByEmail(userDto.getEmail()).isEmpty()) {
+                    user.get().setEmail(userDto.getEmail());
+                } else {
+                    log.info("Email in base");
+                    throw new DublEmail("Email in base");
+                }
+            }
+        }
+        return UserMapper.toUserDto(storage.save(user.get()));
     }
 
     //Получение пользователя по id
     @Override
     public UserDto getUserById(Long id) {
-        if (storage.getUserById(id) != null) {
-            return UserMapper.toUserDto(storage.getUserById(id));
+        if (storage.findById(id).isPresent()) {
+            return UserMapper.toUserDto(storage.findById(id).get());
         } else {
-            throw new ValidationException("Пользователь не найден");
+            log.info("Пользователь не найден!");
+            throw new NotFoundException("Пользователь не найден!");
         }
     }
 
     //Удаление пользователя по id
     @Override
     public void deleteUserById(Long id) {
-        if (storage.getUserById(id) != null) {
-            storage.delereUserById(id);
+        if (storage.findById(id).isPresent()) {
+            storage.deleteById(id);
         } else {
-            throw new ValidationException("Пользователь не найден");
+            throw new NotFoundException("Пользователь не найден");
         }
     }
-
 }

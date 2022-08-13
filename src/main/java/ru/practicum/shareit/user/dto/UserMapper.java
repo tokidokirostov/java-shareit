@@ -15,7 +15,7 @@ public class UserMapper {
                 userDto.getName());
     }
 
-    public static UserDto toUserDto(UserDtoController userDtoController) {
+    public static UserDto toUserDto(UserCreateDto userDtoController) {
         return new UserDto(userDtoController.getId(),
                 userDtoController.getEmail(),
                 userDtoController.getName());

@@ -48,7 +48,7 @@ public class InMemoryItemStorage implements ItemStorage {
             for (Item item : items.values()) {
                 if ((item.getName().toLowerCase().contains(text.toLowerCase())
                         || item.getDescription().toLowerCase().contains(text.toLowerCase()))
-                        && item.getAvailable() == true) {
+                        && item.getIsAvailable() == true) {
                     findItems.add(item);
                 }
             }
