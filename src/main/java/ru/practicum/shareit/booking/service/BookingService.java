@@ -11,9 +11,9 @@ public interface BookingService {
 
     BookingDto addBooking(Long userId, BookingDto bookingDto);
 
-    Booking setApprove(Long userId, Long bookingId, boolean approved);
+    BookingStateDto setApprove(Long userId, Long bookingId, boolean approved);
 
-    Booking getBooking(Long userId, Long id);
+    BookingStateDto getBooking(Long userId, Long id);
 
     List<BookingStateDto> getAllBooking(Long userId, String state);
 

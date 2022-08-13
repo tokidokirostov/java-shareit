@@ -32,7 +32,7 @@ public class BookingController {
 
     //PATCH /bookings/{bookingId}?approved={approved}
     @PatchMapping("/{bookingId}")
-    public Booking approvedBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public BookingStateDto approvedBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
                                    @PathVariable Long bookingId,
                                    @RequestParam(value = "approved") boolean text) {
         log.info("Получен запрос GET /{} user - {}", bookingId, userId);
@@ -40,7 +40,7 @@ public class BookingController {
     }
 
     @GetMapping("{id}")
-    public Booking getBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public BookingStateDto getBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
                               @PathVariable Long id) {
         log.info("Получен запрос GET /booking/{} user - {}", id, userId);
         return bookingService.getBooking(userId, id);

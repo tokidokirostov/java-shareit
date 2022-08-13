@@ -58,7 +58,7 @@ public class BookingServiceImp implements BookingService {
     }
 
     @Override
-    public Booking setApprove(Long userId, Long bookingId, boolean approved) {
+    public BookingStateDto setApprove(Long userId, Long bookingId, boolean approved) {
         Long itemId = bookingRepository.findById(bookingId).get().getItem().getId();
         if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Пользователь не найден");
@@ -77,10 +77,10 @@ public class BookingServiceImp implements BookingService {
             }
             bookingRepository.save(booking);
         }
-        return bookingRepository.findById(bookingId).get();
+        return BookingMapper.toBookingStateDto(bookingRepository.findById(bookingId).get());
     }
 
-    public Booking getBooking(Long userId, Long id) {
+    public BookingStateDto getBooking(Long userId, Long id) {
         if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Пользователь не найден");
         }
@@ -90,7 +90,7 @@ public class BookingServiceImp implements BookingService {
         }
         if (getBooking.get().getBooker().getId().equals(userId) ||
                 getBooking.get().getItem().getOwner().getId().equals(userId)) {
-            return bookingRepository.findById(id).get();
+            return BookingMapper.toBookingStateDto(bookingRepository.findById(id).get());
         } else {
             throw new NotFoundException("Пользователь вещи или автор не найден");
         }
