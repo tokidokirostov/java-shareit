@@ -43,7 +43,6 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemBookingDto> getAllItems(Long userId) {
         LocalDateTime localDateTime = LocalDateTime.now();
-        List<CommentDto> comments = new ArrayList<>();
         return itemStorage.findAllByOwnerId(userId)
                 .stream()
                 .map(item -> ItemMapper.toItemTimesDto(item,
