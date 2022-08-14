@@ -101,40 +101,44 @@ public class BookingServiceImp implements BookingService {
         if (userRepository.findById(userId).isEmpty()) {
             throw new NotFoundException("Пользователь не найден");
         }
-        switch (state) {
-            case "ALL":
-                return bookingRepository.findAllByBookerIdOrderByStartDesc(userId)
-                        .stream()
-                        .map(booking -> BookingMapper.toBookingStateDto(booking))
-                        .collect(Collectors.toList());
-            case "FUTURE":
-                return bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now())
-                        .stream()
-                        .map(booking -> BookingMapper.toBookingStateDto(booking))
-                        .collect(Collectors.toList());
-            case "PAST":
-                return bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now())
-                        .stream()
-                        .map(booking -> BookingMapper.toBookingStateDto(booking))
-                        .collect(Collectors.toList());
-            case "CURRENT":
-                return bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(userId,
-                                LocalDateTime.now(), LocalDateTime.now())
-                        .stream()
-                        .map(booking -> BookingMapper.toBookingStateDto(booking))
-                        .collect(Collectors.toList());
-            case "WAITING":
-                return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING)
-                        .stream()
-                        .map(booking -> BookingMapper.toBookingStateDto(booking))
-                        .collect(Collectors.toList());
-            case "REJECTED":
-                return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED)
-                        .stream()
-                        .map(booking -> BookingMapper.toBookingStateDto(booking))
-                        .collect(Collectors.toList());
-            default:
-                throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
+        try {
+            switch (BookingState.valueOf(state)) {
+                case ALL:
+                    return bookingRepository.findAllByBookerIdOrderByStartDesc(userId)
+                            .stream()
+                            .map(booking -> BookingMapper.toBookingStateDto(booking))
+                            .collect(Collectors.toList());
+                case FUTURE:
+                    return bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now())
+                            .stream()
+                            .map(booking -> BookingMapper.toBookingStateDto(booking))
+                            .collect(Collectors.toList());
+                case PAST:
+                    return bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now())
+                            .stream()
+                            .map(booking -> BookingMapper.toBookingStateDto(booking))
+                            .collect(Collectors.toList());
+                case CURRENT:
+                    return bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(userId,
+                                    LocalDateTime.now(), LocalDateTime.now())
+                            .stream()
+                            .map(booking -> BookingMapper.toBookingStateDto(booking))
+                            .collect(Collectors.toList());
+                case WAITING:
+                    return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING)
+                            .stream()
+                            .map(booking -> BookingMapper.toBookingStateDto(booking))
+                            .collect(Collectors.toList());
+                case REJECTED:
+                    return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED)
+                            .stream()
+                            .map(booking -> BookingMapper.toBookingStateDto(booking))
+                            .collect(Collectors.toList());
+                default:
+                    throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
+            }
+        } catch (Exception e) {
+            throw new ValidationException("Unknown state: " + state);
         }
     }
 
@@ -147,22 +151,26 @@ public class BookingServiceImp implements BookingService {
                 .stream()
                 .map(item -> item.getId())
                 .collect(Collectors.toList());
-        switch (state) {
-            case "ALL":
-                return bookingRepository.findByItemIdInOrderByStartDesc(itemId);
-            case "FUTURE":
-                return bookingRepository.findByItemIdInAndStartAfterOrderByStartDesc(itemId, LocalDateTime.now());
-            case "PAST":
-                return bookingRepository.findByItemIdInAndEndBeforeOrderByStartDesc(itemId, LocalDateTime.now());
-            case "CURRENT":
-                return bookingRepository.findByItemIdInAndStartBeforeAndEndAfterOrderByStartDesc(itemId,
-                        LocalDateTime.now(), LocalDateTime.now());
-            case "WAITING":
-                return bookingRepository.findByItemIdInAndStatusOrderByStartDesc(itemId, BookingStatus.WAITING);
-            case "REJECTED":
-                return bookingRepository.findByItemIdInAndStatusOrderByStartDesc(itemId, BookingStatus.REJECTED);
-            default:
-                throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
+        try {
+            switch (BookingState.valueOf(state)) {
+                case ALL:
+                    return bookingRepository.findByItemIdInOrderByStartDesc(itemId);
+                case FUTURE:
+                    return bookingRepository.findByItemIdInAndStartAfterOrderByStartDesc(itemId, LocalDateTime.now());
+                case PAST:
+                    return bookingRepository.findByItemIdInAndEndBeforeOrderByStartDesc(itemId, LocalDateTime.now());
+                case CURRENT:
+                    return bookingRepository.findByItemIdInAndStartBeforeAndEndAfterOrderByStartDesc(itemId,
+                            LocalDateTime.now(), LocalDateTime.now());
+                case WAITING:
+                    return bookingRepository.findByItemIdInAndStatusOrderByStartDesc(itemId, BookingStatus.WAITING);
+                case REJECTED:
+                    return bookingRepository.findByItemIdInAndStatusOrderByStartDesc(itemId, BookingStatus.REJECTED);
+                default:
+                    throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
+            }
+        } catch (Exception e) {
+            throw new ValidationException("Unknown state: " + state);
         }
     }
 

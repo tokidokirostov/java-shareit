@@ -60,12 +60,7 @@ public class UserServiceImpl implements UserService {
     //Получение пользователя по id
     @Override
     public UserDto getUserById(Long id) {
-        if (storage.findById(id).isPresent()) {
-            return UserMapper.toUserDto(storage.findById(id).get());
-        } else {
-            log.info("Пользователь не найден!");
-            throw new NotFoundException("Пользователь не найден!");
-        }
+        return UserMapper.toUserDto(storage.findById(id).orElseThrow(() -> new NotFoundException("Пользователь не найден!")));
     }
 
     //Удаление пользователя по id
