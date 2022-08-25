@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 /**
  * // TODO .
@@ -21,9 +22,10 @@ public class ItemRequest {
     Long id;
     @Column(name = "description")
     String description;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "requestor_id")
     User requestor;
-    //LocalDateTime created;
+    @Column(name = "created")
+    LocalDateTime created;
 
 }

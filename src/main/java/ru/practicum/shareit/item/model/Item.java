@@ -30,6 +30,6 @@ public class Item {
     @JoinColumn(name = "owner_id")
     User owner;
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "request_id", referencedColumnName = "id")
-    ItemRequest request;
+    @JoinColumn(name = "request_id")
+    ItemRequest requestId;
 }

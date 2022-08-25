@@ -2,6 +2,7 @@ package ru.practicum.shareit.user.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.DublEmail;
@@ -25,7 +26,6 @@ public class UserServiceImpl implements UserService {
     //Получение всех пользователей
     @Override
     public List<UserDto> getAllUsers() {
-        log.info(storage.findAll().toString());
         return storage.findAll().stream()
                 .map(user -> UserMapper.toUserDto(user))
                 .collect(Collectors.toList());
@@ -53,8 +53,11 @@ public class UserServiceImpl implements UserService {
                     throw new DublEmail("Email in base");
                 }
             }
+            return UserMapper.toUserDto(storage.save(user.get()));
+        } else {
+            throw new NotFoundException("Пользователь не найден!");
         }
-        return UserMapper.toUserDto(storage.save(user.get()));
+
     }
 
     //Получение пользователя по id

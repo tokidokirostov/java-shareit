@@ -3,6 +3,9 @@ package ru.practicum.shareit.item.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -14,6 +17,8 @@ import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.CommentRepository;
 import ru.practicum.shareit.item.storage.ItemRepository;
+import ru.practicum.shareit.requests.model.ItemRequest;
+import ru.practicum.shareit.requests.storage.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
@@ -38,6 +43,12 @@ public class ItemServiceImpl implements ItemService {
     @Autowired
     private final CommentRepository commentRepository;
 
+    @Autowired
+    private final ItemRequestRepository itemRequestRepository;
+
+    private final int PAGE = 0;
+    private final int SIZE = 10;
+
 
     //Запрос всех вещей пользователя
     @Override
@@ -59,6 +70,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemBookingDto getItem(Long userId, Long id) {
         if (itemStorage.findById(id).isEmpty()) {
+            log.info("Item not found");
             throw new NotFoundException("Item not found");
         } else {
             List<CommentDto> comments = commentRepository.findByItemId(id)
@@ -81,9 +93,15 @@ public class ItemServiceImpl implements ItemService {
     //Добавление вещи
     @Override
     public ItemDto addItem(Long userId, ItemDto itemDto) {
-        if (userStorage.findById(userId) != null) {
+        if (userStorage.findById(userId).isPresent()) {
             log.info("Пользователь существует. Создание item.");
-            Item item = ItemMapper.toItem(itemDto, userStorage.findById(userId).get());
+            ItemRequest itemRequest;// = new ItemRequest();
+            if (itemDto.getRequestId() == null) {
+                itemRequest = null;
+            } else {
+                itemRequest = itemRequestRepository.findById(itemDto.getRequestId()).get();
+            }
+            Item item = ItemMapper.toItem(itemDto, userStorage.findById(userId).get(), itemRequest);
             return ItemMapper.toItemDto(itemStorage.save(item));
         } else {
             log.info("Пользователь не найден!");
@@ -94,27 +112,27 @@ public class ItemServiceImpl implements ItemService {
     //Изменение вещи
     @Override
     public ItemDto patchUser(Long userId, Long id, ItemDto itemDto) {
-        if (userStorage.findById(userId) == null) {
+        if (userStorage.findById(userId).isEmpty()) {
             log.info("Пользователь не найден!");
             throw new NotFoundException("Пользователь не найден!");
         } else {
+            Optional<Item> patchItem = itemStorage.findById(id);
             log.info("Пользователь существует. Обновление item. ID - {}", id);
-            Item patchItem = itemStorage.findById(id).get();
-            if (!patchItem.getOwner().getId().equals(userId) || patchItem == null) {
+            if (patchItem.isEmpty() || !patchItem.get().getOwner().getId().equals(userId)) {
                 throw new NotFoundException("Item not found");
             } else {
-                if (patchItem.getId().equals(id)) {
+                if (patchItem.get().getId().equals(id)) {
                     if (itemDto.getName() != null) {
-                        patchItem.setName(itemDto.getName());
+                        patchItem.get().setName(itemDto.getName());
                     }
                     if (itemDto.getDescription() != null) {
-                        patchItem.setDescription(itemDto.getDescription());
+                        patchItem.get().setDescription(itemDto.getDescription());
                     }
                     if (itemDto.getAvailable() != null) {
-                        patchItem.setIsAvailable(itemDto.getAvailable());
+                        patchItem.get().setIsAvailable(itemDto.getAvailable());
                     }
                 }
-                return ItemMapper.toItemDto(itemStorage.save(patchItem));
+                return ItemMapper.toItemDto(itemStorage.save(patchItem.get()));
             }
         }
     }
@@ -122,10 +140,12 @@ public class ItemServiceImpl implements ItemService {
     //Поиск вещи
     @Override
     public List<ItemDto> searchItems(Optional<String> text) {
+        Sort sort = Sort.unsorted();
+        Pageable page = PageRequest.of(PAGE, SIZE, sort);
         if (text.isEmpty() || text.get().equals(""))
             return new ArrayList<>();
         else
-            return itemStorage.findItemByDescriptionContainingIgnoreCaseAndIsAvailableTrueOrNameContainingIgnoreCaseAndIsAvailableTrue(text.get(), text.get())
+            return itemStorage.findItemByDescriptionContainingIgnoreCaseAndIsAvailableTrueOrNameContainingIgnoreCaseAndIsAvailableTrue(text.get(), text.get(), page)
                     .stream()
                     .map(item -> ItemMapper.toItemDto(item))
                     .collect(Collectors.toList());
@@ -133,15 +153,22 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentDto saveComment(Long itemId, Long userId, CommentDto commentDto) {
-        LocalDateTime localDateTime = LocalDateTime.now();
-        if (bookingRepository.findByBookerIdAndItemIdAndStatusAndEndBefore(userId, itemId, BookingStatus.APPROVED, localDateTime)
-                != null) {
-            Item item = itemStorage.findById(itemId).get();
-            User user = userStorage.findById(userId).get();
-            commentDto.setCreated(localDateTime);
-            return CommentMapper.toCommentDto(commentRepository.save(CommentMapper.toComment(commentDto, item, user)));
+        if (userStorage.findById(userId).isEmpty()) {
+            log.info("Пользователь не найден!");
+            throw new NotFoundException("Пользователь не найден!");
         } else {
-            throw new ValidationException("Коментарий не сохранен");
+            LocalDateTime localDateTime = LocalDateTime.now();
+            if (bookingRepository.findByBookerIdAndItemIdAndStatusAndEndBefore(userId, itemId, BookingStatus.APPROVED, localDateTime)
+                    != null) {
+                Item item = itemStorage.findById(itemId).get();
+                User user = userStorage.findById(userId).get();
+                commentDto.setCreated(localDateTime);
+                return CommentMapper.toCommentDto(commentRepository.save(CommentMapper.toComment(commentDto, item, user)));
+            } else {
+                throw new ValidationException("Коментарий не сохранен");
+            }
         }
     }
+
+
 }

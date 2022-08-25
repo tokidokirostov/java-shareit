@@ -13,18 +13,18 @@ public class ItemMapper {
                 item.getName(),
                 item.getDescription(),
                 item.getIsAvailable(),
-                item.getRequest() != null ? item.getRequest().getId() : null);
+                item.getRequestId() != null ? item.getRequestId().getId() : null
+        );
     }
 
-    public static Item toItem(ItemDto itemDto, User user) {
-        ItemRequest itemRequest = new ItemRequest();
-        itemRequest.setId(itemDto.getRequest());
+    public static Item toItem(ItemDto itemDto, User user, ItemRequest itemRequest) {
         return new Item(itemDto.getId(),
                 itemDto.getName(),
                 itemDto.getDescription(),
                 itemDto.getAvailable(),
                 user,
-                itemRequest);
+                itemRequest
+        );
     }
 
     public static ItemDto toItemDto(ItemCreateDto itemDtoController) {
@@ -32,7 +32,7 @@ public class ItemMapper {
                 itemDtoController.getName(),
                 itemDtoController.getDescription(),
                 itemDtoController.getAvailable(),
-                itemDtoController.getRequest());
+                itemDtoController.getRequestId());
     }
 
     public static ItemBookingDto toItemTimesDto(Item itemDto, BookingForItemDto lastBooking,
@@ -44,6 +44,7 @@ public class ItemMapper {
                 lastBooking,
                 nextBooking,
                 comments,
-                itemDto.getRequest() != null ? itemDto.getRequest().getId() : null);
+                itemDto.getRequestId() != null ? itemDto.getRequestId().getId() : null
+        );
     }
 }
