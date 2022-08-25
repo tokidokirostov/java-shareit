@@ -33,9 +33,9 @@ public class UserControllerTest {
     @MockBean
     UserServiceImpl userService;
 
-    private UserDto userDto = new UserDto(1l, "user@user.com", "user");
-    private UserDto userDtoWrongEmail = new UserDto(1l, "useruser.com", "user");
-    private UserDto userDtoNoEmail = new UserDto(1l, null, "user");
+    private UserDto userDto = new UserDto(1L, "user@user.com", "user");
+    private UserDto userDtoWrongEmail = new UserDto(1L, "useruser.com", "user");
+    private UserDto userDtoNoEmail = new UserDto(1L, null, "user");
 
     @Test
     void whenTryUseGetMappingUsers_thenReturnListUserDto() throws Exception {

@@ -69,7 +69,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                         .stream()
                         .map(item -> ItemMapper.toItemDto(item))
                         .collect(Collectors.toList()));
-                Long id = 1l;
             }
             return itemRequestDtoList;
         } else {

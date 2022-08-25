@@ -30,15 +30,15 @@ public class IntegrationUserTest {
     }
 
     @Test
-    public void User() throws Exception {
+    public void user() throws Exception {
         UserCreateDto userCreateDto1 = new UserCreateDto(null, "mmm@mail.ru", "mmm");
         UserCreateDto userCreateDto3 = new UserCreateDto(null, "mmmmail.ru", "mmm");
         UserDto updateUser = new UserDto(null, "rrr@mail.ru", null);
         String jacksonUser = mapper.writeValueAsString(userCreateDto1);
         String jacksonUser2 = mapper.writeValueAsString(userCreateDto3);
         String jacksonUser3 = mapper.writeValueAsString(updateUser);
-        mockMvc.perform(post("/users").content(jacksonUser).
-                        contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/users").content(jacksonUser)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("1"))
                 .andExpect(jsonPath("$.name").value("mmm"));
@@ -46,8 +46,8 @@ public class IntegrationUserTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("1"))
                 .andExpect(jsonPath("$.name").value("mmm"));
-        mockMvc.perform(post("/users").content(jacksonUser2).
-                        contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/users").content(jacksonUser2)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());
         mockMvc.perform(patch("/users/1")
                         .content(jacksonUser3)

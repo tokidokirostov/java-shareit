@@ -39,7 +39,7 @@ public class ItemRequestServiceImplTest {
     @InjectMocks
     ItemRequestServiceImpl itemRequestService;
 
-    final Long USER_ID = 1L;
+    final Long userId = 1L;
     User user = new User(1L, "user@user.com", "user");
     User user1 = new User(2L, "other_user@user.com", "other_user");
     Item item = new Item(1L, "Щётка для обуви", "Стандартная щётка для обуви", true, user, null);
@@ -52,7 +52,7 @@ public class ItemRequestServiceImplTest {
     @Test
     void whenTryCreateItemRequestWithOtherUser_thenReturnCustomException() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(NotFoundException.class, () -> itemRequestService.addItemRequest(USER_ID, any()));
+        assertThrows(NotFoundException.class, () -> itemRequestService.addItemRequest(userId, any()));
     }
 
     @Test
@@ -60,7 +60,7 @@ public class ItemRequestServiceImplTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(itemRepository.findByRequestIdList(anyLong())).thenReturn(List.of(item));
         when(itemRequestRepository.save(any(ItemRequest.class))).thenReturn(itemRequest);
-        var result = itemRequestService.addItemRequest(USER_ID, itemRequestDto);
+        var result = itemRequestService.addItemRequest(userId, itemRequestDto);
         assertNotNull(result);
         assertEquals(itemRequestDto1, result);
     }
@@ -76,7 +76,7 @@ public class ItemRequestServiceImplTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
         when(itemRequestRepository.findByRequestorIdOrderByCreatedDesc(anyLong())).thenReturn(List.of(itemRequest));
         when(itemRepository.findByRequestIdList(anyLong())).thenReturn(List.of(item));
-        var result = itemRequestService.getAllItemsRequest(USER_ID);
+        var result = itemRequestService.getAllItemsRequest(userId);
         assertEquals(1, result.size());
         assertEquals(List.of(itemRequestDto1), result);
     }
@@ -93,14 +93,14 @@ public class ItemRequestServiceImplTest {
     @Test
     void whenTryGetItemsRequestWithOtherUser_thenReturnCustomException() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(NotFoundException.class, () -> itemRequestService.getItemRequest(USER_ID, anyLong()));
+        assertThrows(NotFoundException.class, () -> itemRequestService.getItemRequest(userId, anyLong()));
     }
 
     @Test
     void whenTryGetItemsRequestWithOtherItemRequest_thenReturnCustomException() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(itemRequestRepository.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(NotFoundException.class, () -> itemRequestService.getItemRequest(USER_ID, anyLong()));
+        assertThrows(NotFoundException.class, () -> itemRequestService.getItemRequest(userId, anyLong()));
     }
 
     @Test
@@ -109,7 +109,7 @@ public class ItemRequestServiceImplTest {
         when(itemRequestRepository.findById(anyLong())).thenReturn(Optional.of(itemRequest));
         when(itemRepository.findByRequestIdList(anyLong())).thenReturn(List.of(item));
         when(itemRequestRepository.findById(anyLong())).thenReturn(Optional.of(itemRequest));
-        var result = itemRequestService.getItemRequest(USER_ID, anyLong());
+        var result = itemRequestService.getItemRequest(userId, anyLong());
         assertNotNull(result);
         assertEquals(itemRequestDto, result);
     }

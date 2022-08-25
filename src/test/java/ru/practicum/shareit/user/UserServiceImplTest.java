@@ -40,9 +40,9 @@ public class UserServiceImplTest {
     UserDto userUpdateEmptyDto = new UserDto(null, null, null);
 
 
-    final Long USER_ID = 1L;
-    final String UPDATE_NAME = "update_user";
-    final String UPDATE_EMAIL = "update_user@user.com";
+    final Long userId = 1L;
+    final String updateName = "update_user";
+    final String updateEmail = "update_user@user.com";
 
     @Test
     void whenTryCreateUser_thenReturnUser() {
@@ -63,9 +63,9 @@ public class UserServiceImplTest {
 
     @Test
     void whenTryGetUserById_thenReturnUser() {
-        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
-        var result = userService.getUserById(USER_ID);
-        verify(userRepository, times(1)).findById(USER_ID);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        var result = userService.getUserById(userId);
+        verify(userRepository, times(1)).findById(userId);
         assertEquals(userDto, result);
     }
 
@@ -83,35 +83,35 @@ public class UserServiceImplTest {
 
     @Test
     void whenTryUpdateUserNewName_thenReturnUserIsUpdated() {
-        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenAnswer(AdditionalAnswers.returnsFirstArg());
-        var result = userService.patchUser(USER_ID, userUpdateNameDto);
-        assertEquals(UPDATE_NAME, result.getName());
+        var result = userService.patchUser(userId, userUpdateNameDto);
+        assertEquals(updateName, result.getName());
         assertEquals(userUpdateName, result);
     }
 
     @Test
     void whenTryUpdateUserNoChange_thenReturnUserIsNotUpdated() {
-        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenAnswer(AdditionalAnswers.returnsFirstArg());
-        var result = userService.patchUser(USER_ID, userUpdateEmptyDto);
+        var result = userService.patchUser(userId, userUpdateEmptyDto);
         assertEquals(userDto, result);
     }
 
     @Test
     void whenTryUpdateUserNewEmail_thenReturnUserWithUpdateEmail() {
-        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenAnswer(AdditionalAnswers.returnsFirstArg());
-        var result = userService.patchUser(USER_ID, userUpdateEmailDto);
-        assertEquals(UPDATE_EMAIL, result.getEmail());
+        var result = userService.patchUser(userId, userUpdateEmailDto);
+        assertEquals(updateEmail, result.getEmail());
         assertEquals(userUpdateEmail, result);
     }
 
     @Test
     void whenTryUpdateUserDuplicateEmail_thenReturnCustomException() {
-        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(userRepository.findByEmail(userDto.getEmail())).thenReturn(Optional.of(user));
-        assertThrows(DublEmail.class, () -> userService.patchUser(USER_ID, userDto));
+        assertThrows(DublEmail.class, () -> userService.patchUser(userId, userDto));
     }
 
     @Test

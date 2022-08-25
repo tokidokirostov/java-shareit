@@ -79,8 +79,8 @@ public class ItemServiceImplTest {
             true, last, next, comments, null);
 
 
-    final Long USER_ID = 1L;
-    final Long ITEM_ID = 1L;
+    final Long userId = 1L;
+    final Long itemId = 1L;
 
     @Test
     void whenTryCreateItemWithOtherUser_thenReturnCustomException() {
@@ -92,7 +92,7 @@ public class ItemServiceImplTest {
     void whenTryCreateItemWithoutItemRequest_thenReturnItem() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(itemRepository.save(any(Item.class))).thenReturn(Optional.of(item).get());
-        var result = itemService.addItem(USER_ID, itemDto);
+        var result = itemService.addItem(userId, itemDto);
         assertEquals(itemDto, result);
     }
 
@@ -101,7 +101,7 @@ public class ItemServiceImplTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(itemRequestRepository.findById(anyLong())).thenReturn(Optional.of(itemRequest));
         when(itemRepository.save(any(Item.class))).thenReturn(Optional.of(itemWithRequest).get());
-        var result = itemService.addItem(USER_ID, itemDtoRequest);
+        var result = itemService.addItem(userId, itemDtoRequest);
         assertEquals(itemDtoRequest, result);
     }
 
@@ -109,69 +109,69 @@ public class ItemServiceImplTest {
     void whenTryUpdateItemDoesNotExistItem_thenReturnCustomException() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(itemRepository.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(NotFoundException.class, () -> itemService.patchUser(anyLong(), ITEM_ID, itemDto));
+        assertThrows(NotFoundException.class, () -> itemService.patchUser(anyLong(), itemId, itemDto));
     }
 
     @Test
     void whenTryUpdateItemWithOtherUser_thenReturnCustomException() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(NotFoundException.class, () -> itemService.patchUser(anyLong(), ITEM_ID, itemDto));
+        assertThrows(NotFoundException.class, () -> itemService.patchUser(anyLong(), itemId, itemDto));
     }
 
     @Test
     void whenTryUpdateItemUserNotOwner_thenReturnCustomException() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item1));
-        assertThrows(NotFoundException.class, () -> itemService.patchUser(anyLong(), ITEM_ID, itemDto));
+        assertThrows(NotFoundException.class, () -> itemService.patchUser(anyLong(), itemId, itemDto));
     }
 
     @Test
     void whenTryUpdateItemWithNewName_thenReturnItemNameUpdated() {
-        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
-        when(itemRepository.findById(ITEM_ID)).thenReturn(Optional.of(item));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
         when(itemRepository.save(any(Item.class))).thenAnswer(AdditionalAnswers.returnsFirstArg());
-        var result = itemService.patchUser(USER_ID, ITEM_ID, itemDtoNewName);
+        var result = itemService.patchUser(userId, itemId, itemDtoNewName);
         assertEquals(itemDtoNewName.getName(), result.getName());
     }
 
     @Test
     void whenTryUpdateItemWithNewDescription_thenReturnItemDescriptionUpdated() {
-        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
-        when(itemRepository.findById(ITEM_ID)).thenReturn(Optional.of(item));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
         when(itemRepository.save(any(Item.class))).thenAnswer(AdditionalAnswers.returnsFirstArg());
-        var result = itemService.patchUser(USER_ID, ITEM_ID, itemDtoNewDesciption);
+        var result = itemService.patchUser(userId, itemId, itemDtoNewDesciption);
         assertEquals(itemDtoNewDesciption.getDescription(), result.getDescription());
     }
 
     @Test
     void whenTryUpdateItemWithNewAvailable_thenReturnItemAvailableUpdated() {
-        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
-        when(itemRepository.findById(ITEM_ID)).thenReturn(Optional.of(item));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
         when(itemRepository.save(any(Item.class))).thenAnswer(AdditionalAnswers.returnsFirstArg());
-        var result = itemService.patchUser(USER_ID, ITEM_ID, itemDtoNewAvailable);
+        var result = itemService.patchUser(userId, itemId, itemDtoNewAvailable);
         assertEquals(itemDtoNewAvailable.getAvailable(), result.getAvailable());
     }
 
     @Test
     void whenTryGetItemDoesNotExistItem_thenReturnCustomException() {
-        when(itemRepository.findById(ITEM_ID)).thenReturn(Optional.empty());
-        assertThrows(NotFoundException.class, () -> itemService.getItem(anyLong(), ITEM_ID));
+        when(itemRepository.findById(itemId)).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, () -> itemService.getItem(anyLong(), itemId));
     }
 
     @Test
     void whenTryGetItemNoCommentNoOwner_thenReturnItemNoCommentNoBooking() {
-        when(itemRepository.findById(ITEM_ID)).thenReturn(Optional.of(item));
-        var result = itemService.getItem(USER_ID, ITEM_ID);
+        when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
+        var result = itemService.getItem(userId, itemId);
         assertEquals(itemBookingDto, result);
     }
 
     @Test
     void whenTryGetItemWithCommentWithBooking_thenReturnItemWithCommentWithBooking() {
-        when(itemRepository.findById(ITEM_ID)).thenReturn(Optional.of(item));
+        when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
         when(commentRepository.findByItemId(anyLong())).thenReturn(List.of(comment));
         when(bookingService.getLastBooking(anyLong(), any())).thenReturn(lastBooking);
         when(bookingService.getNextBooking(anyLong(), any())).thenReturn(nextBooking);
-        var result = itemService.getItem(USER_ID, ITEM_ID);
+        var result = itemService.getItem(userId, itemId);
         assertEquals(itemBookingDtoFull, result);
     }
 
@@ -181,7 +181,7 @@ public class ItemServiceImplTest {
         when(bookingService.getLastBooking(anyLong(), any())).thenReturn(lastBooking);
         when(bookingService.getNextBooking(anyLong(), any())).thenReturn(nextBooking);
         when(commentRepository.findByItemId(anyLong())).thenReturn(List.of(comment));
-        var result = itemService.getAllItems(USER_ID);
+        var result = itemService.getAllItems(userId);
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(itemBookingDtoFull, result.get(0));
@@ -214,7 +214,7 @@ public class ItemServiceImplTest {
     @Test
     void whenTrySaveCommentWithOtherUser_thenReturnCustomException() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(NotFoundException.class, () -> itemService.saveComment(ITEM_ID, USER_ID, any()));
+        assertThrows(NotFoundException.class, () -> itemService.saveComment(itemId, userId, any()));
     }
 
     @Test
@@ -222,7 +222,7 @@ public class ItemServiceImplTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(bookingRepository.findByBookerIdAndItemIdAndStatusAndEndBefore(anyLong(), anyLong(), any(), any()))
                 .thenReturn(null);
-        assertThrows(ValidationException.class, () -> itemService.saveComment(ITEM_ID, USER_ID, commentDto));
+        assertThrows(ValidationException.class, () -> itemService.saveComment(itemId, userId, commentDto));
     }
 
     @Test
@@ -233,7 +233,7 @@ public class ItemServiceImplTest {
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(commentRepository.save(any())).thenReturn(comment);
-        var result = itemService.saveComment(ITEM_ID, USER_ID, commentDto1);
+        var result = itemService.saveComment(itemId, userId, commentDto1);
         assertEquals(commentDto, result);
     }
 }

@@ -46,14 +46,14 @@ public class BookingControllerTest {
     Item itemTrue = new Item(1L, "Щётка для обуви", "Стандартная щётка для обуви", true, user, null);
     BookingDto bookingDto = new BookingDto(1L, null, null, 1L, 1L, BookingStatus.APPROVED);
 
-    BookingCreateDto bookingCreateDto = new BookingCreateDto(1L, LocalDateTime.of(2017, Month.JULY, 9, 11, 6, 22)
-            , LocalDateTime.of(2017, Month.JULY, 9, 11, 7, 22), 1L, 1L, BookingStatus.WAITING);
+    BookingCreateDto bookingCreateDto = new BookingCreateDto(1L, LocalDateTime.of(2017, Month.JULY, 9, 11, 6, 22),
+            LocalDateTime.of(2017, Month.JULY, 9, 11, 7, 22), 1L, 1L, BookingStatus.WAITING);
 
-    BookingCreateDto bookingCreate1Dto = new BookingCreateDto(1L, LocalDateTime.of(2017, Month.JULY, 9, 11, 6, 22)
-            , null, 1L, 1L, BookingStatus.WAITING);
+    BookingCreateDto bookingCreate1Dto = new BookingCreateDto(1L, LocalDateTime.of(2017, Month.JULY, 9, 11, 6, 22),
+            null, 1L, 1L, BookingStatus.WAITING);
 
-    Booking booking = new Booking(1L, LocalDateTime.of(2023, Month.JULY, 9, 11, 6, 22)
-            , LocalDateTime.of(2023, Month.JULY, 10, 11, 6, 22), itemTrue, user, BookingStatus.APPROVED);
+    Booking booking = new Booking(1L, LocalDateTime.of(2023, Month.JULY, 9, 11, 6, 22),
+            LocalDateTime.of(2023, Month.JULY, 10, 11, 6, 22), itemTrue, user, BookingStatus.APPROVED);
 
     BookingStateDto bookingStateDto = BookingMapper.toBookingStateDto(booking);
 

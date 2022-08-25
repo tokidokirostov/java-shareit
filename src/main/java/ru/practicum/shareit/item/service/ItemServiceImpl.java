@@ -46,8 +46,8 @@ public class ItemServiceImpl implements ItemService {
     @Autowired
     private final ItemRequestRepository itemRequestRepository;
 
-    private final int PAGE = 0;
-    private final int SIZE = 10;
+    private final int page1 = 0;
+    private final int size = 10;
 
 
     //Запрос всех вещей пользователя
@@ -95,7 +95,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto addItem(Long userId, ItemDto itemDto) {
         if (userStorage.findById(userId).isPresent()) {
             log.info("Пользователь существует. Создание item.");
-            ItemRequest itemRequest;// = new ItemRequest();
+            ItemRequest itemRequest;
             if (itemDto.getRequestId() == null) {
                 itemRequest = null;
             } else {
@@ -141,7 +141,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> searchItems(Optional<String> text) {
         Sort sort = Sort.unsorted();
-        Pageable page = PageRequest.of(PAGE, SIZE, sort);
+        Pageable page = PageRequest.of(page1, size, sort);
         if (text.isEmpty() || text.get().equals(""))
             return new ArrayList<>();
         else
