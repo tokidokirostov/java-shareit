@@ -299,6 +299,16 @@ public class BookingServiceImpTest {
     }
 
     @Test
+    void whenTryGetAllBookingByOwnerWithStateALL1_thenReturnListBooking() {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(itemRepository.findAllByOwnerId(anyLong())).thenReturn(List.of(itemTrue));
+        when(bookingRepository.findByItemIdInOrderByStartDesc(any(), any())).thenReturn(new PageImpl(List.of(booking)));
+        var result = bookingServiceImp.getAllBookingByOwner(userId, "ALL", 0L, 1);
+        assertEquals(1, result.size());
+        assertEquals(booking, result.get(0));
+    }
+
+    @Test
     void whenTryGetAllBookingByOwnerWithStateFUTURE_thenReturnListBooking() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(itemRepository.findAllByOwnerId(anyLong())).thenReturn(List.of(itemTrue));

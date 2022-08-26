@@ -129,28 +129,33 @@ public class BookingServiceImp implements BookingService {
         Sort sort = Sort.unsorted();
         Pageable page = PageRequest.of(Math.toIntExact(page1), size, sort);
         Page<Booking> bookingPage;
+        int allPage;
         try {
             switch (BookingState.valueOf(state)) {
                 case ALL:
                     bookingPage = bookingRepository.findAllByBookerIdOrderByStartDesc(userId, page);
-                    while (bookingPage.isEmpty()) {
-                        bookingPage = bookingRepository.findAllByBookerIdOrderByStartDesc(userId, page.previousOrFirst());
+                    allPage = bookingPage.getTotalPages();
+                    System.out.println("total page - " + allPage);
+                    if (page1 >= allPage) {
+                        bookingPage = bookingRepository.findAllByBookerIdOrderByStartDesc(userId, PageRequest.of(--allPage, size, sort));
                     }
                     return bookingPage.stream()
                             .map(booking -> BookingMapper.toBookingStateDto(booking))
                             .collect(Collectors.toList());
                 case FUTURE:
                     bookingPage = bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now(), page);
-                    while (bookingPage.isEmpty()) {
-                        bookingPage = bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now(), page.previousOrFirst());
+                    allPage = bookingPage.getTotalPages();
+                    if (page1 >= allPage) {
+                        bookingPage = bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now(), PageRequest.of(--allPage, size, sort));
                     }
                     return bookingPage.stream()
                             .map(booking -> BookingMapper.toBookingStateDto(booking))
                             .collect(Collectors.toList());
                 case PAST:
                     bookingPage = bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now(), page);
-                    while (bookingPage.isEmpty()) {
-                        bookingPage = bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now(), page.previousOrFirst());
+                    allPage = bookingPage.getTotalPages();
+                    if (page1 >= allPage) {
+                        bookingPage = bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now(), PageRequest.of(--allPage, size, sort));
                     }
                     return bookingPage.stream()
                             .map(booking -> BookingMapper.toBookingStateDto(booking))
@@ -158,27 +163,28 @@ public class BookingServiceImp implements BookingService {
                 case CURRENT:
                     bookingPage = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(userId,
                             LocalDateTime.now(), LocalDateTime.now(), page);
-                    while (bookingPage.isEmpty()) {
+                    allPage = bookingPage.getTotalPages();
+                    if (page1 >= allPage) {
                         bookingPage = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(userId,
-                                LocalDateTime.now(), LocalDateTime.now(), page.previousOrFirst());
+                                LocalDateTime.now(), LocalDateTime.now(), PageRequest.of(--allPage, size, sort));
                     }
                     return bookingPage.stream()
                             .map(booking -> BookingMapper.toBookingStateDto(booking))
                             .collect(Collectors.toList());
                 case WAITING:
                     bookingPage = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING, page);
-                    while (bookingPage.isEmpty()) {
-                        bookingPage = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING, page.previousOrFirst());
-                        ;
+                    allPage = bookingPage.getTotalPages();
+                    if (page1 >= allPage) {
+                        bookingPage = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING, PageRequest.of(--allPage, size, sort));
                     }
                     return bookingPage.stream()
                             .map(booking -> BookingMapper.toBookingStateDto(booking))
                             .collect(Collectors.toList());
                 case REJECTED:
                     bookingPage = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED, page);
-                    while (bookingPage.isEmpty()) {
-                        bookingPage = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED, page.previousOrFirst());
-                        ;
+                    allPage = bookingPage.getTotalPages();
+                    if (page1 >= allPage) {
+                        bookingPage = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED, PageRequest.of(--allPage, size, sort));
                     }
                     return bookingPage.stream()
                             .map(booking -> BookingMapper.toBookingStateDto(booking))
@@ -200,6 +206,7 @@ public class BookingServiceImp implements BookingService {
         }
         Sort sort = Sort.unsorted();
         Pageable page = PageRequest.of(Math.toIntExact(page1), size, sort);
+        int allPage;
         List<Long> itemId = itemRepository.findAllByOwnerId(userId)
                 .stream()
                 .map(item -> item.getId())
@@ -209,40 +216,46 @@ public class BookingServiceImp implements BookingService {
             switch (BookingState.valueOf(state)) {
                 case ALL:
                     bookingPage = bookingRepository.findByItemIdInOrderByStartDesc(itemId, page);
-                    while (bookingPage.isEmpty()) {
-                        bookingPage = bookingRepository.findByItemIdInOrderByStartDesc(itemId, page.previousOrFirst());
+                    allPage = bookingPage.getTotalPages();
+                    if (page1 >= allPage) {
+                        bookingPage = bookingRepository.findByItemIdInOrderByStartDesc(itemId, PageRequest.of(--allPage, size, sort));
                     }
                     return bookingPage.toList();
                 case FUTURE:
                     bookingPage = bookingRepository.findByItemIdInAndStartAfterOrderByStartDesc(itemId, LocalDateTime.now(), page);
-                    while (bookingPage.isEmpty()) {
-                        bookingPage = bookingRepository.findByItemIdInOrderByStartDesc(itemId, page.previousOrFirst());
+                    allPage = bookingPage.getTotalPages();
+                    if (page1 >= allPage) {
+                        bookingPage = bookingRepository.findByItemIdInAndStartAfterOrderByStartDesc(itemId, LocalDateTime.now(), PageRequest.of(--allPage, size, sort));
                     }
                     return bookingPage.toList();
                 case PAST:
                     bookingPage = bookingRepository.findByItemIdInAndEndBeforeOrderByStartDesc(itemId, LocalDateTime.now(), page);
-                    while (bookingPage.isEmpty()) {
-                        bookingPage = bookingRepository.findByItemIdInAndEndBeforeOrderByStartDesc(itemId, LocalDateTime.now(), page.previousOrFirst());
+                    allPage = bookingPage.getTotalPages();
+                    if (page1 >= allPage) {
+                        bookingPage = bookingRepository.findByItemIdInAndEndBeforeOrderByStartDesc(itemId, LocalDateTime.now(), PageRequest.of(--allPage, size, sort));
                     }
                     return bookingPage.toList();
                 case CURRENT:
                     bookingPage = bookingRepository.findByItemIdInAndStartBeforeAndEndAfterOrderByStartDesc(itemId,
                             LocalDateTime.now(), LocalDateTime.now(), page);
-                    while (bookingPage.isEmpty()) {
+                    allPage = bookingPage.getTotalPages();
+                    if (page1 >= allPage) {
                         bookingPage = bookingRepository.findByItemIdInAndStartBeforeAndEndAfterOrderByStartDesc(itemId,
-                                LocalDateTime.now(), LocalDateTime.now(), page.previousOrFirst());
+                                LocalDateTime.now(), LocalDateTime.now(), PageRequest.of(--allPage, size, sort));
                     }
                     return bookingPage.toList();
                 case WAITING:
                     bookingPage = bookingRepository.findByItemIdInAndStatusOrderByStartDesc(itemId, BookingStatus.WAITING, page);
-                    while (bookingPage.isEmpty()) {
-                        bookingPage = bookingRepository.findByItemIdInAndStatusOrderByStartDesc(itemId, BookingStatus.WAITING, page.previousOrFirst());
+                    allPage = bookingPage.getTotalPages();
+                    if (page1 >= allPage) {
+                        bookingPage = bookingRepository.findByItemIdInAndStatusOrderByStartDesc(itemId, BookingStatus.WAITING, PageRequest.of(--allPage, size, sort));
                     }
                     return bookingPage.toList();
                 case REJECTED:
                     bookingPage = bookingRepository.findByItemIdInAndStatusOrderByStartDesc(itemId, BookingStatus.REJECTED, page);
-                    while (bookingPage.isEmpty()) {
-                        bookingPage = bookingRepository.findByItemIdInAndStatusOrderByStartDesc(itemId, BookingStatus.REJECTED, page.previousOrFirst());
+                    allPage = bookingPage.getTotalPages();
+                    if (page1 >= allPage) {
+                        bookingPage = bookingRepository.findByItemIdInAndStatusOrderByStartDesc(itemId, BookingStatus.REJECTED, PageRequest.of(--allPage, size, sort));
                     }
                     return bookingPage.toList();
                 default:
