@@ -53,7 +53,7 @@ public class BookingController {
     //GET /bookings?state={state}
     @GetMapping
     public List<BookingStateDto> getAllBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                               @RequestParam( value = "from", required = false, defaultValue = "0") @PositiveOrZero Long itemRequestId,
+                                               @RequestParam(value = "from", required = false, defaultValue = "0") @PositiveOrZero Long itemRequestId,
                                                @RequestParam(value = "size", required = false, defaultValue = "10") @Positive Integer size,
                                                @RequestParam(value = "state", required = false, defaultValue = "ALL") String state) {
         log.info("Получен запрос GET /booking?state={} user - {}", state, userId);
