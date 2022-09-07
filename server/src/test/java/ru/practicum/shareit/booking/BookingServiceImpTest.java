@@ -49,10 +49,6 @@ public class BookingServiceImpTest {
     BookingDto bookingDto = new BookingDto(1L, null, null, 1L, 1L, BookingStatus.APPROVED);
     BookingDto bookingDtoBefore = new BookingDto(1L, LocalDateTime.of(2017, Month.JULY, 9, 11, 6, 22),
             null, 1L, 1L, BookingStatus.APPROVED);
-    BookingDto bookingDtoBefore1 = new BookingDto(1L, LocalDateTime.of(2023, Month.JULY, 9, 11, 6, 22),
-            LocalDateTime.of(2017, Month.JULY, 9, 11, 6, 22), 1L, 1L, BookingStatus.APPROVED);
-    BookingDto bookingDtoBefore2 = new BookingDto(1L, LocalDateTime.of(2023, Month.JULY, 9, 11, 6, 22),
-            LocalDateTime.of(2023, Month.JULY, 8, 11, 6, 22), 1L, 1L, BookingStatus.APPROVED);
 
     BookingDto bookingDtoBeforeOk1 = new BookingDto(1L, LocalDateTime.of(2023, Month.JULY, 9, 11, 6, 22),
             LocalDateTime.of(2023, Month.JULY, 10, 11, 6, 22), 1L, 2L, BookingStatus.APPROVED);
@@ -88,34 +84,13 @@ public class BookingServiceImpTest {
     }
 
     @Test
-    void whenTryCreateBookingWithItemStartTimeBefore_thenReturnCustomException() {
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(itemRepository.findById(anyLong())).thenReturn(Optional.of(itemTrue));
-        assertThrows(ValidationException.class, () -> bookingServiceImp.addBooking(userId, bookingDtoBefore));
-    }
-
-    @Test
     void whenTryCreateBookingWithItemIsUnavailable_thenReturnCustomException() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(itemFalse));
         assertThrows(ValidationException.class, () -> bookingServiceImp.addBooking(userId, bookingDtoBefore));
     }
 
-    @Test
-    void whenTryCreateBookingWithItemEndTimeBefore_thenReturnCustomException() {
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(itemRepository.findById(anyLong())).thenReturn(Optional.of(itemTrue));
-        assertThrows(ValidationException.class, () -> bookingServiceImp.addBooking(userId, bookingDtoBefore1));
-    }
-
-    @Test
-    void whenTryCreateBookingWithItemStartTimeAfterEndTime_thenReturnCustomException() {
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(itemRepository.findById(anyLong())).thenReturn(Optional.of(itemTrue));
-        assertThrows(ValidationException.class, () -> bookingServiceImp.addBooking(userId, bookingDtoBefore2));
-    }
-
-    @Test
+     @Test
     void whenTryCreateBookingWithItemUserIdIqualsBookinUserId_thenReturnCustomException() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(itemTrue));

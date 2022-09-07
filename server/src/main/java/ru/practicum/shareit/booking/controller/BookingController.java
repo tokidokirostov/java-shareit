@@ -11,9 +11,6 @@ import ru.practicum.shareit.booking.dto.BookingStateDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.service.BookingServiceImp;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -29,7 +26,7 @@ public class BookingController {
 
     @PostMapping
     public BookingDto addBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                 @Valid @RequestBody BookingCreateDto bookingCreateDto) {
+                                 @RequestBody BookingCreateDto bookingCreateDto) {
         log.info("Получен запрос POST /bookings - {} user - {}", bookingCreateDto, userId);
         return bookingService.addBooking(userId, BookingMapper.toBookingDto(bookingCreateDto));
     }
@@ -53,8 +50,8 @@ public class BookingController {
     //GET /bookings?state={state}
     @GetMapping
     public List<BookingStateDto> getAllBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                               @RequestParam(value = "from", required = false, defaultValue = "0") @PositiveOrZero Long itemRequestId,
-                                               @RequestParam(value = "size", required = false, defaultValue = "10") @Positive Integer size,
+                                               @RequestParam(value = "from", required = false, defaultValue = "0") Long itemRequestId,
+                                               @RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
                                                @RequestParam(value = "state", required = false, defaultValue = "ALL") String state) {
         log.info("Получен запрос GET /booking?state={}?from={}&size={} user - {}", state, itemRequestId, size, userId);
         return bookingService.getAllBooking(userId, state, itemRequestId, size);

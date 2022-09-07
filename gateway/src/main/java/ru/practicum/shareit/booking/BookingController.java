@@ -7,10 +7,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
+import ru.practicum.shareit.exception.ValidationException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.time.LocalDateTime;
 
 @Controller
 @RequestMapping(path = "/bookings")
@@ -42,6 +44,18 @@ public class BookingController {
     public ResponseEntity<Object> bookItem(@RequestHeader("X-Sharer-User-Id") long userId,
                                            @RequestBody @Valid BookingCreateDto bookingCreateDto) {
         log.info("Creating booking {}, userId={}", bookingCreateDto, userId);
+        if (bookingCreateDto.getStart().isBefore(LocalDateTime.now())) {
+            log.info("Не верная дата начала бронирования");
+            throw new ValidationException("Не верная дата начала бронирования");
+        }
+        if (bookingCreateDto.getEnd().isBefore(LocalDateTime.now())) {
+            log.info("Не верная дата конца бронирования");
+            throw new ValidationException("Не верная дата конца бронирования");
+        }
+        if (bookingCreateDto.getStart().isAfter(bookingCreateDto.getEnd())) {
+            log.info("дата конца раньше даты начала");
+            throw new ValidationException("дата конца раньше даты начала");
+        }
         return bookingClient.bookItem(userId, bookingCreateDto);
     }
 

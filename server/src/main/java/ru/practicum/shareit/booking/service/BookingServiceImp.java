@@ -47,38 +47,27 @@ public class BookingServiceImp implements BookingService {
 
     @Override
     public BookingDto addBooking(Long userId, BookingDto bookingDto) {
-        if (userRepository.findById(userId).isEmpty()) {
+        Optional<User> userFromRepository = userRepository.findById(userId);
+        if (userFromRepository.isEmpty()) {
             log.info("Пользователь не найден - {}", userId);
             throw new NotFoundException("Пользователь не найден");
         }
-        if (itemRepository.findById(bookingDto.getItemId()).isEmpty()) {
+        Optional<Item> itemFromRepository = itemRepository.findById(bookingDto.getItemId());
+        if (itemFromRepository.isEmpty()) {
             log.info("Вещь не найдена - {}", bookingDto.getItemId());
             throw new NotFoundException("Вещь не найдена");
         }
-        if (!itemRepository.findById(bookingDto.getItemId()).get().getIsAvailable()) {
+        if (!itemFromRepository.get().getIsAvailable()) {
             log.info("Вещь недоступна");
             throw new ValidationException("Вещь недоступна");
         }
-        if (bookingDto.getStart().isBefore(LocalDateTime.now())) {
-            log.info("Не верная дата начала бронирования");
-            throw new ValidationException("Не верная дата начала бронирования");
-        }
-        if (bookingDto.getEnd().isBefore(LocalDateTime.now())) {
-            log.info("Не верная дата конца бронирования");
-            throw new ValidationException("Не верная дата конца бронирования");
-        }
-        if (bookingDto.getStart().isAfter(bookingDto.getEnd())) {
-            log.info("дата конца раньше даты начала");
-            throw new ValidationException("дата конца раньше даты начала");
-        }
-        Item item = itemRepository.findById(bookingDto.getItemId()).get();
-        if (item.getOwner().getId().equals(userId)) {
+        if (itemFromRepository.get().getOwner().getId().equals(userId)) {
             log.info("Пользователь не может забронировать свою вещь.");
             throw new NotFoundException("Пользователь не может забронировать свою вещь.");
         } else {
-            User user = userRepository.findById(userId).get();
             bookingDto.setStatus(BookingStatus.WAITING);
-            return BookingMapper.toBookingDto(bookingRepository.save(BookingMapper.toBooking(bookingDto, user, item)));
+            return BookingMapper.toBookingDto(bookingRepository.save(BookingMapper.toBooking(bookingDto,
+                    userFromRepository.get(), itemFromRepository.get())));
         }
     }
 
@@ -120,7 +109,7 @@ public class BookingServiceImp implements BookingService {
         }
         if (getBooking.get().getBooker().getId().equals(userId) ||
                 getBooking.get().getItem().getOwner().getId().equals(userId)) {
-            return BookingMapper.toBookingStateDto(bookingRepository.findById(id).get());
+            return BookingMapper.toBookingStateDto(getBooking.get());
         } else {
             log.info("Пользователь или не автор вещи, или не автор бронирования");
             throw new NotFoundException("Пользователь или не автор вещи, или не автор бронирования");

@@ -34,7 +34,6 @@ public class UserControllerTest {
     UserServiceImpl userService;
 
     private UserDto userDto = new UserDto(1L, "user@user.com", "user");
-    private UserDto userDtoWrongEmail = new UserDto(1L, "useruser.com", "user");
     private UserDto userDtoNoEmail = new UserDto(1L, null, "user");
 
     @Test
@@ -72,24 +71,6 @@ public class UserControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.id").value("1"))
                 .andExpect(jsonPath("$.name").value("user"));
-    }
-
-    @Test
-    void whenTryUsePostMappingUsersWithWrongEmail_thenReturnCustomException() throws Exception {
-        String jacksonUser1 = mapper.writeValueAsString(userDtoWrongEmail);
-        mvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jacksonUser1))
-                .andExpect(status().is4xxClientError());
-    }
-
-    @Test
-    void whenTryUsePostMappingUsersWrongEmail_thenReturnCustomException() throws Exception {
-        String jacksonUser1 = mapper.writeValueAsString(userDtoNoEmail);
-        mvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jacksonUser1))
-                .andExpect(status().is4xxClientError());
     }
 
     @Test

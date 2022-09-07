@@ -43,7 +43,6 @@ public class ItemRequestControllerTest {
     Item item = new Item(1L, "Щётка для обуви", "Стандартная щётка для обуви", true, user, null);
     ItemDto itemDto = ItemMapper.toItemDto(item);
     ItemRequestDto itemRequestDto = new ItemRequestDto(1L, "Хотел бы воспользоваться щёткой для обуви", 1L, null, List.of(itemDto));
-    ItemRequestDto itemRequest1Dto = new ItemRequestDto(1L, null, 1L, null, List.of(itemDto));
 
     @Test
     void whenTryUsePostMappingItemRequest_thenReturnItemRequestDto() throws Exception {
@@ -62,16 +61,6 @@ public class ItemRequestControllerTest {
     void whenTryUsePostMappingItemRequestWithOtherUser_thenReturnCustomException() throws Exception {
         String jackson = mapper.writeValueAsString(itemRequestDto);
         when(requestService.addItemRequest(anyLong(), any())).thenThrow(new NotFoundException("Пользователь не найден."));
-        mvc.perform(post("/requests")
-                        .header("X-Sharer-User-Id", 99)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jackson))
-                .andExpect(status().is4xxClientError());
-    }
-
-    @Test
-    void whenTryUsePostMappingItemRequestWithNull_thenReturnCustomException() throws Exception {
-        String jackson = mapper.writeValueAsString(itemRequest1Dto);
         mvc.perform(post("/requests")
                         .header("X-Sharer-User-Id", 99)
                         .contentType(MediaType.APPLICATION_JSON)

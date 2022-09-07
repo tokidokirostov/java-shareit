@@ -44,7 +44,6 @@ public class ItemControllerTest {
     ItemDto itemDto = ItemMapper.toItemDto(item);
     ItemBookingDto itemBookingDto = new ItemBookingDto(1L, "Щётка для обуви", "Стандартная щётка для обуви",
             true, null, null, new ArrayList<>(), null);
-    Comment comment = new Comment(1L, "Add comment", item, user, null);
     CommentDto commentDto1 = new CommentDto(1L, "Add comment", "user", null);
 
     @Test

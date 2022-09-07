@@ -42,7 +42,6 @@ public class BookingControllerTest {
     BookingServiceImp bookingService;
 
     User user = new User(1L, "user@user.com", "user");
-    User user1 = new User(2L, "user1@user.com", "user1");
     Item itemTrue = new Item(1L, "Щётка для обуви", "Стандартная щётка для обуви", true, user, null);
     BookingDto bookingDto = new BookingDto(1L, null, null, 1L, 1L, BookingStatus.APPROVED);
 

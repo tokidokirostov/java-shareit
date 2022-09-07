@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
@@ -20,7 +19,6 @@ public class Comment {
     @Column(name = "id")
     Long id;
     @Column(name = "text")
-    @NotNull
     String text;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "item_id")

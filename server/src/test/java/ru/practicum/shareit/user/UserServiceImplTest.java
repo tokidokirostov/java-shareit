@@ -17,7 +17,6 @@ import ru.practicum.shareit.user.storage.UserRepository;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -56,7 +55,6 @@ public class UserServiceImplTest {
         when(userRepository.findAll()).thenReturn(List.of(user));
         var result = userService.getAllUsers();
         verify(userRepository, times(1)).findAll();
-        assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(userDto, result.get(0));
     }

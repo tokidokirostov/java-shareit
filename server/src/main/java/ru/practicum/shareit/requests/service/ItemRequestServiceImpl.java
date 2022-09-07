@@ -18,6 +18,7 @@ import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -32,8 +33,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public ItemRequestDto addItemRequest(Long userId, ItemRequestDto itemRequestDto) {
+        Optional<User> user = userRepository.findById(userId);
         if (userRepository.findById(userId).isPresent()) {
-            User user = userRepository.findById(userId).get();
             LocalDateTime localDateTime = LocalDateTime.now();
             itemRequestDto.setCreated(localDateTime);
             itemRequestDto.setItems(itemRepository.findByRequestIdList(itemRequestDto.getId())
@@ -41,7 +42,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                     .map(item -> ItemMapper.toItemDto(item))
                     .collect(Collectors.toList()));
             return ItemRequestMapper.toItemRequestDto(
-                    itemRequestRepository.save(ItemRequestMapper.toItemRequest(itemRequestDto, user)),
+                    itemRequestRepository.save(ItemRequestMapper.toItemRequest(itemRequestDto, user.get())),
                     itemRepository.findByRequestIdList(itemRequestDto.getId())
                             .stream()
                             .map(item -> ItemMapper.toItemDto(item))
@@ -95,7 +96,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public ItemRequestDto getItemRequest(Long requestId, Long userId) {
-        System.out.println("User - " + userId);
         if (userRepository.findById(userId).isEmpty()) {
             log.info("Пользователь не найден!");
             throw new NotFoundException("Пользователь не найден!");
