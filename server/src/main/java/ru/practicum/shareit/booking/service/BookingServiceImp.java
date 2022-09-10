@@ -130,12 +130,9 @@ public class BookingServiceImp implements BookingService {
             case all:
                 bookingPage = bookingRepository.findAllByBookerIdOrderByStartDesc(userId, page);
                 allPage = bookingPage.getTotalPages();
-                System.out.println("total page - " + allPage);
                 if (page1 >= allPage) {
                     if (allPage > 0) {
                         --allPage;
-                        System.out.println("Page - " + page);
-                        System.out.println("AllPage - " + allPage);
                     }
                     bookingPage = bookingRepository.findAllByBookerIdOrderByStartDesc(userId, PageRequest.of(allPage, size, sort));
                 }
@@ -148,8 +145,6 @@ public class BookingServiceImp implements BookingService {
                 if (page1 >= allPage) {
                     if (allPage > 0) {
                         --allPage;
-                        System.out.println("Page - " + page);
-                        System.out.println("AllPage - " + allPage);
                     }
                     bookingPage = bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now(), PageRequest.of(allPage, size, sort));
                 }
@@ -162,8 +157,6 @@ public class BookingServiceImp implements BookingService {
                 if (page1 >= allPage) {
                     if (allPage > 0) {
                         --allPage;
-                        System.out.println("Page - " + page);
-                        System.out.println("AllPage - " + allPage);
                     }
                     bookingPage = bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now(), PageRequest.of(allPage, size, sort));
                 }
@@ -174,12 +167,9 @@ public class BookingServiceImp implements BookingService {
                 bookingPage = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(userId,
                         LocalDateTime.now(), LocalDateTime.now(), page);
                 allPage = bookingPage.getTotalPages();
-                System.out.println("1AllPage - " + allPage);
                 if (page1 >= allPage) {
                     if (allPage > 0) {
                         --allPage;
-                        System.out.println("Page - " + page);
-                        System.out.println("AllPage - " + allPage);
                     }
                     bookingPage = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(userId,
                             LocalDateTime.now(), LocalDateTime.now(), PageRequest.of(allPage, size, sort));
@@ -193,8 +183,6 @@ public class BookingServiceImp implements BookingService {
                 if (page1 >= allPage) {
                     if (allPage > 0) {
                         --allPage;
-                        System.out.println("Page - " + page);
-                        System.out.println("AllPage - " + allPage);
                     }
                     bookingPage = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING, PageRequest.of(allPage, size, sort));
                 }
@@ -207,8 +195,6 @@ public class BookingServiceImp implements BookingService {
                 if (page1 >= allPage) {
                     if (allPage > 0) {
                         --allPage;
-                        System.out.println("Page - " + page);
-                        System.out.println("AllPage - " + allPage);
                     }
                     bookingPage = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED, PageRequest.of(allPage, size, sort));
                 }
@@ -234,7 +220,6 @@ public class BookingServiceImp implements BookingService {
                 .map(item -> item.getId())
                 .collect(Collectors.toList());
         Page<Booking> bookingPage;
-        System.out.println("BookinState - " + state);
         switch (state) {
             case all:
                 bookingPage = bookingRepository.findByItemIdInOrderByStartDesc(itemId, page);
@@ -242,8 +227,6 @@ public class BookingServiceImp implements BookingService {
                 if (page1 >= allPage) {
                     if (allPage > 0) {
                         --allPage;
-                        System.out.println("Page - " + page);
-                        System.out.println("AllPage - " + allPage);
                     }
                     bookingPage = bookingRepository.findByItemIdInOrderByStartDesc(itemId, PageRequest.of(allPage, size, sort));
                 }
@@ -254,8 +237,6 @@ public class BookingServiceImp implements BookingService {
                 if (page1 >= allPage) {
                     if (allPage > 0) {
                         --allPage;
-                        System.out.println("Page - " + page);
-                        System.out.println("AllPage - " + allPage);
                     }
                     bookingPage = bookingRepository.findByItemIdInAndStartAfterOrderByStartDesc(itemId, LocalDateTime.now(), PageRequest.of(allPage, size, sort));
                 }
@@ -266,8 +247,6 @@ public class BookingServiceImp implements BookingService {
                 if (page1 >= allPage) {
                     if (allPage > 0) {
                         --allPage;
-                        System.out.println("Page - " + page);
-                        System.out.println("AllPage - " + allPage);
                     }
                     bookingPage = bookingRepository.findByItemIdInAndEndBeforeOrderByStartDesc(itemId, LocalDateTime.now(), PageRequest.of(allPage, size, sort));
                 }
@@ -276,12 +255,9 @@ public class BookingServiceImp implements BookingService {
                 bookingPage = bookingRepository.findByItemIdInAndStartBeforeAndEndAfterOrderByStartDesc(itemId,
                         LocalDateTime.now(), LocalDateTime.now(), page);
                 allPage = bookingPage.getTotalPages();
-                System.out.println("AllPage - " + allPage);
                 if (page1 >= allPage) {
                     if (allPage > 0) {
                         --allPage;
-                        System.out.println("Page - " + page);
-                        System.out.println("AllPage - " + allPage);
                     }
                     bookingPage = bookingRepository.findByItemIdInAndStartBeforeAndEndAfterOrderByStartDesc(itemId,
                             LocalDateTime.now(), LocalDateTime.now(), PageRequest.of(allPage, size, sort));
@@ -293,8 +269,6 @@ public class BookingServiceImp implements BookingService {
                 if (page1 >= allPage) {
                     if (allPage > 0) {
                         --allPage;
-                        System.out.println("Page - " + page);
-                        System.out.println("AllPage - " + allPage);
                     }
                     bookingPage = bookingRepository.findByItemIdInAndStatusOrderByStartDesc(itemId, BookingStatus.WAITING, PageRequest.of(allPage, size, sort));
                 }
@@ -305,8 +279,6 @@ public class BookingServiceImp implements BookingService {
                 if (page1 >= allPage) {
                     if (allPage > 0) {
                         --allPage;
-                        System.out.println("Page - " + page);
-                        System.out.println("AllPage - " + allPage);
                     }
                     bookingPage = bookingRepository.findByItemIdInAndStatusOrderByStartDesc(itemId, BookingStatus.REJECTED, PageRequest.of(allPage, size, sort));
                 }
